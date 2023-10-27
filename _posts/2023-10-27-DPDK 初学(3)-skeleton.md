@@ -34,15 +34,20 @@ tags: [dpdk]
   rte_pktmbuf_pool_create(const char *name, unsigned int n,
    unsigned int cache_size, uint16_t priv_size, uint16_t data_room_size,
    int socket_id)
-
-   name: 缓冲区名字
-   n: 缓冲区内mbuf的数量
-   cache_size: 每一个核应该缓存多少mbuf对象
-   priv_size: 应用的私有数据大小，位于rte_mbuf struct和data buffer之间
-   data_room_size: 每一个mbuf的data buffer大小
-   socket_id: 一个socket标识符，这个参数和NUMA(Non-uniform memory access)有关，通常通过rte_socket_id函数来获取
   ```
 
+  name: 缓冲区名字
+
+  n: 缓冲区内mbuf的数量
+
+  cache_size: 每一个核应该缓存多少mbuf对象
+
+  priv_size: 应用的私有数据大小，位于rte_mbuf struct和data buffer之间
+
+  data_room_size: 每一个mbuf的data buffer大小
+
+  socket_id: 一个socket标识符，这个参数和NUMA(Non-uniform memory access)有关，通常通过rte_socket_id函数来获取
+  
   提前申请足够大的可用缓冲区，用在后续的收发包。
 
 - rte_eth_dev_info_get
