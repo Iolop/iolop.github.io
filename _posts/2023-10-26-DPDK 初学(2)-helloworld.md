@@ -13,6 +13,7 @@ tags: [dpdk]
 ## 关键函数
 
 - rte_eal_init
+  
   这个函数就是入口初始化所有环境，初始化所有EAL参数，具体的可选参数可以参考[DPDK的官方文档](https://doc.dpdk.org/guides/linux_gsg/linux_eal_parameters.html)
 - rte_eal_remote_launch
   
