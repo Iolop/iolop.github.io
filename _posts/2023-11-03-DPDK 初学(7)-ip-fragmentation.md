@@ -3,7 +3,7 @@ categories: [DPDK noob]
 tags: [dpdk]
 ---
 
-# ip_fragmentation example
+# Ip_fragmentation example
 
 到现在为止，有一点不理解，那就是使用vfio-pci驱动的网卡，怎么ifconfig看不到。在stackoverflow看到了[一个解答](https://stackoverflow.com/questions/31097809/interface-goes-missing-from-ifconfig-in-dpdk)，不知道对不对，留待后续验证。
 
