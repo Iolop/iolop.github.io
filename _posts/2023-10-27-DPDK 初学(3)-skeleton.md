@@ -5,27 +5,13 @@ tags: [dpdk]
 
 # skeleton example
 
-## 关键流程
-
-- 初始化EAL环境
-  形如`application -l 0-3 -n 4 -- -q`其中通过`--`分隔，前部分为EAL参数，后部分为应用所需参数
-
-  ```c
-  argc -= ret;
-  argv += ret;
-  ```
-
-- 建立mbuf_pool
-- 轮询所有ports，为每一个ports初始化
-- 使用一个逻辑核开始收发包处理
-
 ## 关键函数
 
-- rte_eth_dev_count_avail
+### rte_eth_dev_count_avail
 
   该函数用来获取当前所有可用端口，在dpdk中端口不是平时网络编程中常见的port，这里的port我觉得可以理解成一个可用的抽象NIC(Network Interface Card)。由于本示例是转发测试，所以至少需要两个ports来进行。
 
-- rte_pktmbuf_pool_create
+### rte_pktmbuf_pool_create
 
   函数原型
 
@@ -50,7 +36,7 @@ tags: [dpdk]
   
   提前申请足够大的可用缓冲区，用在后续的收发包。
 
-- rte_eth_dev_info_get
+### rte_eth_dev_info_get
   
   获取一个NIC的配置信息，检查是否具有所需的功能。检查NIC是否支持MBUF快速释放功能卸载，如果支持就在port_conf中加上此标志位
 
@@ -60,17 +46,32 @@ tags: [dpdk]
    RTE_ETH_TX_OFFLOAD_MBUF_FAST_FREE;
   ```
 
-- rte_eth_dev_configure
+### rte_eth_dev_configure
   
   将port_conf应用到port所对应的rx/tx 收发队列上
 
-- rte_eth_dev_adjust_nb_rx_tx_desc
+### rte_eth_dev_adjust_nb_rx_tx_desc
   
   调整每一个rx/tx队列中的rxd/txd(收发描述符)数量
 
-- rte_eth_rx_queue_setup
+### rte_eth_rx_queue_setup
   
   分配并且设置好rx队列
 
-- rte_eth_tx_queue_setup
+### rte_eth_tx_queue_setup
+
   分配并且设置好tx队列
+  
+## 关键流程
+
+- 初始化EAL环境
+  形如`application -l 0-3 -n 4 -- -q`其中通过`--`分隔，前部分为EAL参数，后部分为应用所需参数
+
+  ```c
+  argc -= ret;
+  argv += ret;
+  ```
+
+- 建立mbuf_pool
+- 轮询所有ports，为每一个ports初始化
+- 使用一个逻辑核开始收发包处理

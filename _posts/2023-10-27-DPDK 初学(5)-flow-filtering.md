@@ -7,15 +7,9 @@ tags: [dpdk]
 
 重复函数不再赘述，只会涉及到新增的部分
 
-## 关键流程
-
-- 初始化EAL
-- 对端口进行设置
-- 构造flow rule并且应用
-
 ## 关键函数
 
-- init_port
+### init_port
 
   定义了需要的卸载功能，后续通过与网卡能提供的能力做`&`即可。
 
@@ -76,7 +70,7 @@ tags: [dpdk]
   rte_eth_dev_start(port_id);
   ```
 
-- generate_ipv4_flow
+### generate_ipv4_flow
 
   函数原型如下，从参数能大概推测是为了在port_id指定的nic上对指定rx_queue开启某种规则
 
@@ -156,3 +150,9 @@ tags: [dpdk]
   0x00005555555564b5 in generate_ipv4_flow ()
   0x00005555555554fa in main ()
   ```
+
+## 关键流程
+
+- 初始化EAL
+- 对端口进行设置
+- 构造flow rule并且应用
