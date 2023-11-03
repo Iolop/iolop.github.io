@@ -1,6 +1,6 @@
 ---
 layout: post
-title: DPDK 初学(8)-IPv4 Multicast Sample
+title: DPDK 初学(8) IPv4 Multicast Sample
 date: 2023-11-03 23:11 +0800
 categories: [DPDK noob]
 tags: [dpdk]
