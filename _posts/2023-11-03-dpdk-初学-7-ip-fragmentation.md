@@ -173,12 +173,64 @@ ret = rte_lpm_add(lpm,
 
 ### l3fwd_simple_forward
 
-有点懵逼，这个`qconf->tx_mbufs[port_out].m_table`是怎么引入的来着。
+在`main_loop`里面，首先是从read packet这个动作进入的。把收到的`mbuf`放到`pkts_burst`中，开始处理这些包。
 
 移除Ethernet头
 
 ```c
 rte_pktmbuf_adj(m, (uint16_t)sizeof(struct rte_ether_hdr));
+```
+
+如果是IPV4包就开始进行最长前缀匹配。因为它是先累积到一起后面再`send_burst`，所以这里面会有一个len的问题，可能你之前放进去的包都还没发，要记着这一点。
+
+```c
+if (RTE_ETH_IS_IPV4_HDR(m->packet_type)) {
+    ...
+    if (rte_lpm_lookup(rxq->lpm, ip_dst, &next_hop) == 0 &&
+    (enabled_port_mask & 1 << next_hop) != 0) {
+   port_out = next_hop;
+
+   /* Build transmission burst for new port */
+   len = qconf->tx_mbufs[port_out].len;
+  }
+```
+
+接着就开始处理分片的问题。不需要分片是最好的，直接把mbuf放到发送队列的mbufs去，否则就有个分片的过程了。下面还有个IPV6版本的，过程差不多。
+
+```c
+if (likely (IPV4_MTU_DEFAULT >= m->pkt_len)) {
+   qconf->tx_mbufs[port_out].m_table[len] = m;
+   len2 = 1;
+  } else {
+    //下面这个函数就是分片函数啦，还是很好理解的，指定好pkt_in和pkt_out就行，空间位置留够，返回一个分片后的pkt_cnt
+   len2 = rte_ipv4_fragment_packet(m,
+    &qconf->tx_mbufs[port_out].m_table[len],
+    (uint16_t)(MBUF_TABLE_SIZE - len),
+    IPV4_MTU_DEFAULT,
+    rxq->direct_pool, rxq->indirect_pool);
+
+   /* Free input packet */
+   rte_pktmbuf_free(m);
+
+   /* request HW to regenerate IPv4 cksum */
+   ol_flags |= (RTE_MBUF_F_TX_IPV4 | RTE_MBUF_F_TX_IP_CKSUM);
+
+   /* If we fail to fragment the packet */
+   if (unlikely (len2 < 0))
+    return;
+  }
+```
+
+最后修改一下包头，大功告成~
+
+```c
+struct rte_ether_hdr *eth_hdr = (struct rte_ether_hdr *)
+   rte_pktmbuf_prepend(m,
+    (uint16_t)sizeof(struct rte_ether_hdr));
+m->ol_flags |= ol_flags;//看上面，交给硬件重算一次chsum
+m->l2_len = sizeof(struct rte_ether_hdr);
+rte_ether_addr_copy(&ports_eth_addr[port_out],
+    &eth_hdr->src_addr);
 ```
 
 ## 关键流程
