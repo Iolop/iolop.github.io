@@ -1,6 +1,6 @@
 ---
 layout: post
-title: DPDK 初学(7) ip-fragmentation
+title: DPDK 初学(7) Ip-fragmentation
 date: 2023-11-03 02:11 +0800
 categories: [DPDK noob]
 tags: [dpdk]
