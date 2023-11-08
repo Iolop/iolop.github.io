@@ -1,6 +1,6 @@
 ---
 layout: post
-title: DPDK 初学(9)-keepalive
+title: DPDK 初学(9)-L2fwd Keepalive
 date: 2023-11-05 21:10 +0800
 categories: [DPDK noob]
 tags: [dpdk]
