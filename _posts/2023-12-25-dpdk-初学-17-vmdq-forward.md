@@ -13,33 +13,33 @@ VMDq进行L2转发时，将进入流量拆分成多个队列。简单来说，�
 前面的差别都不大，基础操作。初始EAL环境，检查可用的lcore，检查可用的ports，建立mbuf_pool，随后开始初始化port。即下方这个port_init函数。
 
 ```c
-port_init(portid, mbuf_pool)
+port_init(portid, mbuf_pool);
 ```
 
 由于每一个网卡的配置可能有所不同，所以这里给出了一个默认配置，具体的选项得自己配置，从`rte_eth_dev_info_get`获取后来设置相应的结构体。
 
 ```c
 static const struct rte_eth_conf vmdq_conf_default = {
- .rxmode = {
-  .mq_mode        = RTE_ETH_MQ_RX_VMDQ_ONLY,
- },
+    .rxmode = {
+        .mq_mode        = RTE_ETH_MQ_RX_VMDQ_ONLY,
+    },
 
- .txmode = {
-  .mq_mode = RTE_ETH_MQ_TX_NONE,
- },
- .rx_adv_conf = {
-  /*
-   * should be overridden separately in code with
-   * appropriate values
-   */
-  .vmdq_rx_conf = {
-   .nb_queue_pools = RTE_ETH_8_POOLS,
-   .enable_default_pool = 0,
-   .default_pool = 0,
-   .nb_pool_maps = 0,
-   .pool_map = {{0, 0},},
-  },
- },
+    .txmode = {
+        .mq_mode = RTE_ETH_MQ_TX_NONE,
+    },
+    .rx_adv_conf = {
+        /*
+         * should be overridden separately in code with
+         * appropriate values
+         */
+        .vmdq_rx_conf = {
+            .nb_queue_pools = RTE_ETH_8_POOLS,
+            .enable_default_pool = 0,
+            .default_pool = 0,
+            .nb_pool_maps = 0,
+            .pool_map = {{0, 0}},/*can't use {0,0}, the second comma will cause error in Liquid!*/
+        },
+    },
 };
 ```
 
