@@ -143,3 +143,5 @@ for (q = startQueue; q < endQueue; q++) {
  }
 }
 ```
+
+题外话，到这里基本的dpdk示例就看完啦。后面的一些示例比如Vhost、Vdpa这种要搭配着qemu来模拟两端通信，或者是一些特殊库比如Eventdev这种，就不再继续写了。直接跳到后面的`IPsec Security Gateway Sample Application`这里来，这个有点大，慢慢写只有。
